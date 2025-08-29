@@ -77,7 +77,7 @@ const ModelSelectionButton: React.FC<{ model: string; name: string; current: str
     </button>
 );
 
-const UploaderFrame: React.FC<{ onImageUpload: (file: File), t: (key: string) => string }> = ({ onImageUpload, t }) => {
+const UploaderFrame: React.FC<{ onImageUpload: (file: File); t: (key: string) => string }> = ({ onImageUpload, t }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
 

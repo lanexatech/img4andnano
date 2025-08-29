@@ -1,22 +1,22 @@
 import { GoogleGenAI, Modality } from "@google/genai";
 
-// Ensure the API key is available from environment variables
-if (!process.env.API_KEY) {
-  throw new Error("API_KEY environment variable not set.");
-}
-
-const defaultAi = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
 interface ImageInput {
   data: string; // Base64 encoded string without the data URL prefix
   mimeType: string;
 }
 
 const getAiClient = (apiKey?: string): GoogleGenAI => {
-  if (apiKey) {
-    return new GoogleGenAI({ apiKey });
+  // Prioritize the custom API key from the input.
+  // Fallback to the environment variable if the custom key is not provided.
+  const effectiveApiKey = apiKey || process.env.API_KEY;
+
+  if (!effectiveApiKey) {
+    // Throw an error that will be caught by the calling function's try-catch block.
+    // This prevents the app from crashing on load.
+    throw new Error("API key not provided. Please enter a key or configure the environment variable.");
   }
-  return defaultAi;
+  
+  return new GoogleGenAI({ apiKey: effectiveApiKey });
 };
 
 /**
@@ -35,8 +35,8 @@ export const generateImage = async (
   image?: ImageInput,
   apiKey?: string,
 ): Promise<string> => {
-  const ai = getAiClient(apiKey);
   try {
+    const ai = getAiClient(apiKey);
     if (model === 'imagen-4.0-generate-001') {
       const response = await ai.models.generateImages({
         model: 'imagen-4.0-generate-001',
